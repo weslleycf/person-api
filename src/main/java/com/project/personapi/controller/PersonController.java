@@ -1,11 +1,15 @@
 package com.project.personapi.controller;
 
+import com.project.personapi.dto.request.PersonDTO;
 import com.project.personapi.dto.response.MessageResponseDTO;
 import com.project.personapi.entity.Person;
-import com.project.personapi.repository.PersonRepository;
+import com.project.personapi.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -13,27 +17,23 @@ import java.util.List;
 public class PersonController {
 
 
-    private PersonRepository personRepository;
+    private final PersonService personService;
 
     @Autowired
-    public PersonController(PersonRepository personRepository) {
-        this.personRepository = personRepository;
+    public PersonController(PersonService personService) {
+        this.personService = personService;
     }
-
 
 
     @GetMapping
     public List<Person> getPeople(){
-      return personRepository.findAll();
+      return personService.getPeople();
     }
 
     @PostMapping
-    public MessageResponseDTO createPerson(@RequestBody Person person){
-        Person savedPerson = personRepository.save(person);
-        return MessageResponseDTO
-                .builder()
-                .message("Person created with id : " + savedPerson.getId())
-                .build();
+    @ResponseStatus(HttpStatus.CREATED)
+    public MessageResponseDTO createPerson(@RequestBody @Valid PersonDTO personDTO){
+        return personService.createPerson(personDTO);
     }
 
 }
