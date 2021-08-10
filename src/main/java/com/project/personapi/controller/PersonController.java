@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -34,7 +35,7 @@ public class PersonController {
 
 
     @GetMapping("/{id}")
-    public PersonDTO getPerson(@PathVariable("id") Long id) throws PersonNotFoundException {
+    public PersonDTO getPerson(@PathVariable Long id) throws PersonNotFoundException {
            return personService.findById(id);
 
     }
@@ -46,6 +47,18 @@ public class PersonController {
         return personService.createPerson(personDTO);
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePerson(@PathVariable Long id) throws PersonNotFoundException {
+        personService.deleteById(id);
+
+
+    }
+
+    @PutMapping("/{id}")
+    public MessageResponseDTO updatePerson(@PathVariable Long id, @RequestBody @Valid PersonDTO personDTO) throws PersonNotFoundException {
+        return personService.updatePersonById(id, personDTO);
+    }
 
 
 }
